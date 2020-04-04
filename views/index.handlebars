@@ -1,0 +1,91 @@
+
+<div class="jumbotron">
+    <h1>Eat-Da-Burger!</h1>
+</div>
+
+
+{{!-- <img src="/img/burger.png" alt="burger logo"> --}}
+
+<div class="row">
+    <div class="col-6">
+        <div class="new-burgers">
+        {{#each burgers}}
+            {{#unless devoured}}
+                <p>
+                    {{burger_name}}
+                    
+                    <button class="change-devoured" data-id="{{this.id}}">EAT IT !</button>
+                </p>
+
+                    <script>
+                        $(".change-devoured").on("click", function(event) {
+                            var id = $(this).data("id");
+                            var userDevoured = {
+                                devoured: 1
+                            };
+
+                            //send the PUT request
+                            $.ajax("/api/burgers/" + id,{
+                                type: "PUT",
+                                data: userDevoured
+                            }).then(
+                                function(){
+                                    console.log(`changed sleep to`);
+                                    location.reload();
+                                }
+                            )
+                        })
+                    </script>
+
+            {{/unless}}
+        {{/each}}
+        </div>
+    </div>
+    
+    <div class="col-3">
+        <div >
+            {{#each burgers}}
+                {{#if devoured}}
+                    <p class="old-burgers">
+                        {{burger_name}}
+                    </p>
+                {{/if}}
+            {{/each}}
+        </div>
+    </div>
+</div>
+
+
+
+<form class="create-form">
+    <div>
+        <input type="text" class="burger-input" id="burger-name" name="name">
+    </div>
+        
+    <button type="submit" id="submit-bttn" style="font-family: 'Chewy', cursive">Submit</button>
+    
+    <script>
+        $(".create-form").on("submit", function(event){
+            event.preventDefault();
+
+            var newBurger = {
+                burger_name: $("#burger-name").val().trim(),
+                devoured: "0"
+            };
+
+            // send POST request
+            $.ajax("/api/burgers", {
+                type: "POST",
+                data: newBurger
+            }).then(
+                function() {
+                    console.log(`created new burger`);
+                    location.reload();
+                }
+            )
+        })
+    </script>
+
+</form>
+
+<p id="caption">Enter a burger you want to eat, Click the submit button</p>
